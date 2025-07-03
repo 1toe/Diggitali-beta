@@ -5,7 +5,6 @@ import type { TestSession } from "@/types"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { Volume2, HelpCircle } from "lucide-react"
 
 interface TestInterfaceProps {
   testSession: TestSession
@@ -20,7 +19,8 @@ export default function TestInterface({ testSession, onAnswerSubmit, onTestCompl
   const [currentIndex, setCurrentIndex] = useState(testSession.currentQuestionIndex)
 
   const currentQuestion = testSession.questions[currentIndex]
-  const progress = ((currentIndex + 1) / testSession.questions.length) * 100
+  const totalQuestions = 3 // Siempre 3 preguntas
+  const progress = ((currentIndex + 1) / totalQuestions) * 100
 
   const handleAnswerSelect = (answerIndex: number) => {
     setSelectedAnswer(answerIndex)
@@ -30,12 +30,12 @@ export default function TestInterface({ testSession, onAnswerSubmit, onTestCompl
     if (selectedAnswer !== null) {
       onAnswerSubmit(selectedAnswer)
 
-      if (currentIndex < testSession.questions.length - 1) {
+      if (currentIndex < totalQuestions - 1) {
         const nextIndex = currentIndex + 1
         setCurrentIndex(nextIndex)
         setSelectedAnswer(testSession.answers[nextIndex])
       } else {
-        // Test completado
+        // Test completado - siempre después de las 3 preguntas
         const finalSession = {
           ...testSession,
           answers: testSession.answers.map((answer, index) => (index === currentIndex ? selectedAnswer : answer)),
@@ -54,10 +54,17 @@ export default function TestInterface({ testSession, onAnswerSubmit, onTestCompl
   }
 
   const handleSkip = () => {
-    if (currentIndex < testSession.questions.length - 1) {
+    if (currentIndex < totalQuestions - 1) {
       const nextIndex = currentIndex + 1
       setCurrentIndex(nextIndex)
       setSelectedAnswer(testSession.answers[nextIndex])
+    } else {
+      // Si es la última pregunta y quiere saltarla, completar el test
+      const finalSession = {
+        ...testSession,
+        answers: testSession.answers.map((answer, index) => (index === currentIndex ? null : answer)),
+      }
+      onTestComplete(finalSession)
     }
   }
 
@@ -74,7 +81,6 @@ export default function TestInterface({ testSession, onAnswerSubmit, onTestCompl
               </span>
             </div>
             <div className="flex items-center space-x-4">
-              <Volume2 className="w-5 h-5 cursor-pointer hover:opacity-80" />
               <span className="text-sm">Salir</span>
             </div>
           </div>
@@ -85,8 +91,17 @@ export default function TestInterface({ testSession, onAnswerSubmit, onTestCompl
       <div className="max-w-4xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between text-white mb-2">
           <span className="text-sm">
-            Pregunta {currentIndex + 1} / {testSession.questions.length}
+            Pregunta {currentIndex + 1} de {totalQuestions}
           </span>
+          <div className="flex space-x-2">
+            {Array.from({ length: totalQuestions }, (_, index) => (
+              <div
+                key={index}
+                className={`w-2 h-2 rounded-full ${index <= currentIndex ? 'bg-white' : 'bg-white/30'
+                  }`}
+              />
+            ))}
+          </div>
         </div>
         <Progress value={progress} className="h-2 bg-white/20" />
       </div>
@@ -98,9 +113,7 @@ export default function TestInterface({ testSession, onAnswerSubmit, onTestCompl
             {/* Question Header */}
             <div className="flex items-start justify-between mb-6">
               <div className="flex items-center space-x-2">
-                <Volume2 className="w-5 h-5 text-gray-400" />
               </div>
-              <HelpCircle className="w-8 h-8 text-yellow-500" />
             </div>
 
             {/* Scenario */}
@@ -118,11 +131,10 @@ export default function TestInterface({ testSession, onAnswerSubmit, onTestCompl
                 {currentQuestion.options.map((option, index) => (
                   <label
                     key={index}
-                    className={`flex items-start space-x-3 p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                      selectedAnswer === index
+                    className={`flex items-start space-x-3 p-4 rounded-lg border-2 cursor-pointer transition-all ${selectedAnswer === index
                         ? "border-purple-500 bg-purple-50"
                         : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-                    }`}
+                      }`}
                   >
                     <input
                       type="radio"
@@ -153,7 +165,7 @@ export default function TestInterface({ testSession, onAnswerSubmit, onTestCompl
               </div>
 
               <Button onClick={handleNext} disabled={selectedAnswer === null} className="px-8 Ladico-button-primary">
-                {currentIndex === testSession.questions.length - 1 ? "Finalizar" : "Tu valida →"}
+                {currentIndex === totalQuestions - 1 ? "Finalizar" : "Tu valida →"}
               </Button>
             </div>
 

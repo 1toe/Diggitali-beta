@@ -110,7 +110,6 @@ export default function Dashboard() {
                     <div className="text-xs">Ladico</div>
                   </div>
                 </div>
-                <div className="text-sm text-gray-500">1024 🏆</div>
               </div>
             </div>
           </div>

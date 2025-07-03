@@ -35,19 +35,6 @@ export default function Hero() {
                         </button>
                     </div>
                 </div>
-
-                {/* Simple Visual */}
-                <div className="grid grid-cols-3 gap-4 max-w-md mx-auto">
-                    <div className="h-20 bg-indigo-100 rounded-2xl border-2 border-indigo-200 animate-float"></div>
-                    <div
-                        className="h-20 bg-purple-100 rounded-2xl border-2 border-purple-200 animate-float"
-                        style={{ animationDelay: "1s" }}
-                    ></div>
-                    <div
-                        className="h-20 bg-blue-100 rounded-2xl border-2 border-blue-200 animate-float"
-                        style={{ animationDelay: "2s" }}
-                    ></div>
-                </div>
             </div>
         </section>
     )

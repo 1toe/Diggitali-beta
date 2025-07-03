@@ -22,11 +22,6 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    <div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8 text-gray-600">
-                        <div className="bg-gray-100 rounded-2xl border-2 border-gray-200 px-6 py-3">© 2024 Ladico</div>
-                        <div className="bg-gray-100 rounded-2xl border-2 border-gray-200 px-6 py-3">Privacidad</div>
-                        <div className="bg-gray-100 rounded-2xl border-2 border-gray-200 px-6 py-3">Términos</div>
-                    </div>
                 </div>
             </div>
         </footer>

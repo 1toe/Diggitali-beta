@@ -12,7 +12,7 @@ export default function TestResults() {
   const score = Number.parseInt(searchParams.get("score") || "0")
   const passed = searchParams.get("passed") === "true"
   const correctAnswers = Number.parseInt(searchParams.get("correct") || "0")
-  const totalQuestions = 3
+  const totalQuestions = 3 // Siempre 3 preguntas
 
   const handleReturnToDashboard = () => {
     router.push("/dashboard")

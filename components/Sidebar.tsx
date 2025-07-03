@@ -8,8 +8,6 @@ import { usePathname } from "next/navigation"
 const navigation = [
   { name: "Home", href: "/dashboard", icon: Home },
   { name: "Competencias", href: "/dashboard", icon: Award },
-  { name: "Certificación", href: "/certification", icon: BookOpen },
-  { name: "Mis tutoriales", href: "/tutorials", icon: BookOpen },
 ]
 
 export default function Sidebar() {
@@ -60,10 +58,6 @@ export default function Sidebar() {
             Cerrar sesión
           </button>
 
-          <button className="flex items-center w-full px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors mt-2">
-            <HelpCircle className="w-4 h-4 mr-3" />
-            Centro de ayuda
-          </button>
         </div>
       </div>
     </div>
