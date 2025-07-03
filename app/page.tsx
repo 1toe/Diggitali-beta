@@ -6,12 +6,12 @@ import Hero from "@/components/landing/Hero"
 import Features from "@/components/landing/Features"
 import Contact from "@/components/landing/Contact"
 import Footer from "@/components/landing/Footer"
-import { getFirebaseAnalytics } from "@/lib/firebase"
+import { analytics } from "@/lib/firebase"
 
 export default function LandicoLanding() {
   useEffect(() => {
-    const analytics = getFirebaseAnalytics()
-    if (analytics) {
+    // Initialize Firebase Analytics only in browser environment
+    if (typeof window !== "undefined" && analytics) {
       console.log("Firebase Analytics initialized")
     }
   }, [])
