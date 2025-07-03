@@ -1,14 +1,20 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Menu, X } from "lucide-react"
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const router = useRouter()
 
     const scrollTo = (id: string) => {
         document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
         setIsMenuOpen(false)
+    }
+
+    const goToLogin = () => {
+        router.push("/login")
     }
 
     return (
@@ -34,16 +40,10 @@ export default function Header() {
                         >
                             Features
                         </button>
-                        <button
-                            onClick={() => scrollTo("contacto")}
-                            className="px-6 py-3 rounded-xl hover:bg-gray-100 transition-all"
-                        >
-                            Contacto
-                        </button>
                     </nav>
 
                     {/* CTA */}
-                    <button onClick={() => scrollTo("contacto")} className="hidden md:block ladico-button">
+                    <button onClick={goToLogin} className="hidden md:block ladico-button">
                         Comenzar
                     </button>
 
@@ -72,13 +72,7 @@ export default function Header() {
                             >
                                 Features
                             </button>
-                            <button
-                                onClick={() => scrollTo("contacto")}
-                                className="block w-full text-left px-4 py-3 rounded-xl hover:bg-gray-50"
-                            >
-                                Contacto
-                            </button>
-                            <button onClick={() => scrollTo("contacto")} className="w-full ladico-button mt-4">
+                            <button onClick={goToLogin} className="w-full ladico-button mt-4">
                                 Comenzar
                             </button>
                         </div>

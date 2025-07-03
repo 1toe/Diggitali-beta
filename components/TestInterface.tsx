@@ -163,17 +163,13 @@ export default function TestInterface({ testSession, onAnswerSubmit, onTestCompl
                 <div className="w-4 h-4 rounded-full bg-blue-100 flex items-center justify-center">
                   <div className="w-2 h-2 rounded-full bg-blue-600"></div>
                 </div>
-                <span className="text-sm">
-                  Hemos detectado un cambio de página. En la certificación, su respuesta no se validará.
-                </span>
+
               </div>
             )}
 
             {/* Report Problem */}
             <div className="mt-6 pt-4 border-t border-gray-200">
               <button className="text-sm text-gray-500 hover:text-gray-700 flex items-center space-x-1">
-                <span>📝</span>
-                <span>Informar un problema con la pregunta</span>
               </button>
             </div>
           </CardContent>

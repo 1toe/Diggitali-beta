@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { Zap, Shield, Smartphone } from "lucide-react"
 
 const features = [
@@ -21,6 +22,11 @@ const features = [
 ]
 
 export default function Features() {
+    const router = useRouter()
+
+    const goToLogin = () => {
+        router.push("/login")
+    }
     return (
         <section id="features" className="ladico-section bg-white">
             <div className="max-w-6xl mx-auto">

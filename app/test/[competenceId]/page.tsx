@@ -34,6 +34,31 @@ export default function TestPage() {
   const loadQuestions = async () => {
     try {
       const competenceId = params.competenceId as string
+      let finalQuestions: Question[] = []
+
+      // Verificar que db está disponible
+      if (!db) {
+        console.error("Firebase no está inicializado")
+        finalQuestions = createSampleQuestions(competenceId)
+        setQuestions(finalQuestions)
+        
+        const session: TestSession = {
+          id: "",
+          userId: user!.uid,
+          competence: competenceId,
+          level: "basico",
+          questions: finalQuestions,
+          answers: new Array(3).fill(null),
+          currentQuestionIndex: 0,
+          startTime: new Date(),
+          score: 0,
+          passed: false,
+        }
+
+        setTestSession(session)
+        setLoading(false)
+        return
+      }
 
       // Cargar preguntas de nivel básico para la competencia
       const q = query(
@@ -51,13 +76,20 @@ export default function TestPage() {
 
       if (loadedQuestions.length < 3) {
         // Si no hay suficientes preguntas, crear preguntas de ejemplo
-        const sampleQuestions = createSampleQuestions(competenceId)
-        setQuestions(sampleQuestions)
+        finalQuestions = createSampleQuestions(competenceId)
+        console.log("Usando preguntas de ejemplo para competencia:", competenceId)
       } else {
         // Seleccionar 3 preguntas aleatorias
-        const selectedQuestions = loadedQuestions.sort(() => 0.5 - Math.random()).slice(0, 3)
-        setQuestions(selectedQuestions)
+        finalQuestions = loadedQuestions.sort(() => 0.5 - Math.random()).slice(0, 3)
+        console.log("Usando preguntas de Firestore para competencia:", competenceId)
       }
+
+      // Asegurar que siempre tenemos exactamente 3 preguntas
+      if (finalQuestions.length !== 3) {
+        finalQuestions = createSampleQuestions(competenceId)
+      }
+
+      setQuestions(finalQuestions)
 
       // Crear sesión de test
       const session: TestSession = {
@@ -65,7 +97,7 @@ export default function TestPage() {
         userId: user!.uid,
         competence: competenceId,
         level: "basico",
-        questions: questions.length > 0 ? questions : createSampleQuestions(competenceId),
+        questions: finalQuestions,
         answers: new Array(3).fill(null),
         currentQuestionIndex: 0,
         startTime: new Date(),

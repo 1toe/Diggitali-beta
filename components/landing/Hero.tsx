@@ -1,8 +1,16 @@
 "use client"
 
+import { useRouter } from "next/navigation"
+
 export default function Hero() {
+    const router = useRouter()
+    
     const scrollTo = (id: string) => {
         document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
+    }
+
+    const goToLogin = () => {
+        router.push("/login")
     }
 
     return (
@@ -22,8 +30,8 @@ export default function Hero() {
                         <button onClick={() => scrollTo("features")} className="ladico-button">
                             Ver características
                         </button>
-                        <button onClick={() => scrollTo("contacto")} className="ladico-button-outline">
-                            Contactar
+                        <button onClick={goToLogin} className="ladico-button-outline">
+                            Comenzar
                         </button>
                     </div>
                 </div>
