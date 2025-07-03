@@ -1,0 +1,189 @@
+Manus, debes usar tus conocimientos totales al 100% y lograr realizar esto (NO USES DATOS MOCK):
+
+Objetivo:
+Desarrollar una plataforma web que:
+-Reciba el contenido generado externamente.
+-Presente las preguntas que fueron generadas y subidas.
+-Calcule resultados al finalizar (cuantas preguntas completó, son 3)
+-Muestre un resumen simple de desempeño.
+
+1. Interfaz de usuario (frontend)
+-Mostrar una pregunta por pantalla (texto + alternativas).
+-Registrar las respuestas del usuario.
+-Permitir avanzar o retroceder preguntas.
+-Al final, mostrar un resumen de rendimiento (preguntas correctas, incorrectas, bloqueadas, etc.).
+* Debe tener la paleta de colores de "pix.fr". 
+* Login y Register (Nombre, edad, pais, correo, contraseña)
+
+2. Módulo de control (backend o lógica de estado)
+-Cargar preguntas desde firebase firestore (Dentro de firebase firestore, estarán las preguntas guardadas que fueron generadas anteriormente, como un banco de preguntas)
+-Controlar el flujo del test: inicio, navegación, finalización.
+* El usuario tendrá un dashboard con su contenido.
+-Calcular resultado automáticamente según reglas entregadas.
+-Guardar o exportar los resultados si se requiere.
+
+
+
+3. Adaptabilidad
+-Debe funcionar en computador y celular.
+Complementando: El proyecto consiste en una aplicación web que permite gestionar un banco de preguntas que se suben a firestore firebase y luego se cargan a la aplicación web. Las preguntas están organizadas por:
+
+1. dimensión
+2. competencia
+3. nivel de dificultad (básico, intermedio, avanzado).
+
+
+La funcionalidad principal es LO QUE MÁS IMPORTA:
+
+1. almacenar, consultar y presentar estas preguntas a usuarios en la web.
+2. A continuación te presento el prompt con el que generaré las preguntas. ESTE NO será implementado dentro de la página, es para que tengas en cuenta el formato JSON y detalles.
+
+
+
+"""
+Actúas como generador de ítems educativos alineados al marco DigComp 2.2, especializado en trámites digitales latinoamericanos.
+
+Tu tarea tiene dos partes, basadas en el siguiente perfil de usuario:
+
+Edad: {edad}
+
+Género: {genero}
+
+País: {pais}
+
+
+---
+
+🔍 PARTE 1: Detectar trámite digital relevante
+
+Primero, responde la siguiente pregunta:
+
+¿Cuál es uno de los trámites digitales gubernamentales más frecuentes en {pais}, realizado por una persona {genero} de {edad} años?
+
+Entrega solo el nombre del trámite, cumpliendo los siguientes criterios:
+
+Realista, frecuente y accesible por internet
+
+Relevante para el perfil etario y género
+
+Vinculado a una institución oficial real
+
+No debe depender exclusivamente de atención presencial
+
+
+---
+
+PARTE 2: Generar ítem tipo “alternativa múltiple”
+
+Ahora asume también el rol de experto en trámites digitales e instituciones gubernamentales de {pais}.
+
+Con base en el trámite detectado en la Parte 1, genera un ítem evaluativo de tipo alternativa múltiple alineado a los siguientes parámetros:
+
+Competencia DigComp: 1.1 – Navegar, buscar y filtrar datos, información y contenidos digitales
+
+Nivel: Básico 2
+
+Tipo de pregunta: alternativa múltiple
+
+
+---
+
+Criterios de diseño del ítem:
+
+Considera que el nivel básico 2 implica que el usuario debe ser capaz de:
+
+Identificar sus necesidades de información
+
+Encontrar datos e información mediante búsquedas sencillas en internet
+
+Acceder y navegar entre contenidos
+
+Usar estrategias personales básicas de búsquedaos de internet.
+
+
+---
+
+Estructura esperada:
+
+Devuelve únicamente un objeto JSON válido, con esta estructura:
+
+{
+
+"type": "multiple-choice",
+
+"competence": "1.1",
+
+"level": "Básico 2",
+
+"title": "Título breve de la pregunta",
+
+"scenario": "Escenario realista contextualizado al trámite y el perfil del usuario.",
+
+"options": [
+
+"Opción A (correcta): Representa una búsqueda clara, usando palabras clave relevantes.",  
+
+"Opción B (distractor): Búsqueda poco precisa o mal redactada.",  
+
+"Opción C (distractor): Buscar en redes sociales como Facebook o TikTok.",  
+
+"Opción D (distractor): Evitar la búsqueda y depender de conocidos o esperar."
+
+],
+
+"correctAnswerIndex": 0,
+
+"feedback": {
+
+"correct": "¡Correcto! Esa es una manera clara y eficaz de encontrar la información digital.",  
+
+"incorrect": "No es la mejor opción. Recuerda usar palabras específicas y fuentes confiables al buscar trámites."
+
+}
+
+}
+
+
+---
+
+"""
+
+Ante esto, el sistema debe permitir almacenar y subir los bancos de preguntas evaluativas y también almacenar los resultados (de cada usuario) en archivos estructurados para su uso posterior.
+
+Para esto, deberás desarrollar un script funcional para eso.
+
+Las dimensiones son:
+
+1. Información y alfabetización informacional,
+2. Comunicación y colaboración,
+3. Creación de contenido digital,
+4. Seguridad,
+5. Resolución de problemas
+
+Se necesita desarrollar las dimensiones:
+1 y 4.
+
+Las competencias son parte de las dimensiones.
+
+Para 1 y 4 son:
+
+1.1. Navegar, buscar y filtrar datos, información y contenidos digitales.
+1.2. Evaluar datos, información y contenidos digitales.
+1.3. Gestión de datos, información y contenidos digitales.
+
+4.1. Proteger los dispositivos.
+4.2. Proteger los datos personales y privacidad.
+4.3. Proteger la salud y el bienestar.
+4.4. Proteger el medio ambiente.
+
+Se parte por el nivel basico. En donde se deben mostrar 3 preguntas, si 2 de 3 estan correctamente contestadas, SE AVANZA SI O SI al siguiente nivel.
+
+
+Aquí está mi stack actual y que necesito que agregues algunas cocsas para que sea mas eficiente trabajar y lograr lo requerido:
+node.js
+firebase Authentication y firestore 
+ReactJS
+React Router DOM
+CSS
+
+Mi proyecto es IDENTICO a "pix.fr".
