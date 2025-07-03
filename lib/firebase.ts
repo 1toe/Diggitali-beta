@@ -51,5 +51,22 @@ try {
   console.error("Error initializing Firebase services:", error)
 }
 
+// Helper function to get Firebase Analytics safely
+export function getFirebaseAnalytics(): Analytics | null {
+  if (typeof window === "undefined") {
+    return null
+  }
+
+  try {
+    if (app && !analytics) {
+      analytics = getAnalytics(app)
+    }
+    return analytics
+  } catch (error) {
+    console.error("Error getting Firebase Analytics:", error)
+    return null
+  }
+}
+
 export { auth, db, analytics, provider }
 export default app
