@@ -25,12 +25,7 @@ export default function Hero() {
 
                         <div className="flex flex-col sm:flex-row gap-4 mb-12">
                             <button onClick={() => scrollTo("caracteristicas")} className="ladico-button-primary group">
-                                Explorar características
-                                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                            </button>
-                            <button onClick={() => scrollTo("acerca")} className="ladico-button-secondary group">
-                                <Play className="mr-2 h-5 w-5" />
-                                Ver demo
+                                ¿Qué ofrecemos?
                             </button>
                         </div>
 

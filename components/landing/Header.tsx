@@ -1,12 +1,14 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Menu, X, Zap } from "lucide-react"
+import { Menu, X, Zap, User } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/AuthContext"
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isScrolled, setIsScrolled] = useState(false)
+    const { user, userData } = useAuth()
 
     useEffect(() => {
         const handleScroll = () => {
@@ -25,11 +27,17 @@ export default function Header() {
     const goToLogin = () => {
         router.push("/login")
     }
+    
+    const goToDashboard = () => {
+        router.push("/dashboard")
+    }
 
+    // Determinar el texto a mostrar en el botón de usuario
+    const userDisplayName = userData?.name || user?.displayName || user?.email || "Usuario"
 
     return (
         <header
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white/90 backdrop-blur-sm border-b-2 border-gray-100" : "bg-transparent"
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white/90 backdrop-blur-sm border-b-2 border-gray-100" : "bg-transparent border-b border-indigo-100/30"
                 }`}
         >
             <div className="max-w-7xl mx-auto px-6">
@@ -56,10 +64,17 @@ export default function Header() {
                     </nav>
 
 
-                    {/* CTA */}
-                    <button onClick={goToLogin} className="hidden md:block ladico-button">
-                        Comenzar
-                    </button>
+                    {/* CTA o Usuario */}
+                    {user ? (
+                        <div onClick={goToDashboard} className="hidden md:flex items-center space-x-2 px-4 py-2 rounded-xl bg-white border-2 border-indigo-100 cursor-pointer hover:border-indigo-300 transition-all">
+                            <User className="h-5 w-5 text-indigo-500" />
+                            <span className="font-medium text-indigo-700">{userDisplayName}</span>
+                        </div>
+                    ) : (
+                        <button onClick={goToLogin} className="hidden md:block ladico-button">
+                            Comenzar
+                        </button>
+                    )}
 
                     {/* Mobile Menu Button */}
                     <button
@@ -74,7 +89,7 @@ export default function Header() {
                 {isMenuOpen && (
                     <div className="md:hidden pb-6">
                         <div className="bg-white rounded-2xl border-2 border-gray-100 p-6 space-y-3 shadow-lg">
-                            {["Inicio", "Características", "Acerca", "Contacto"].map((item) => (
+                            {["Inicio", "Acerca", "Contacto"].map((item) => (
                                 <button
                                     key={item}
                                     onClick={() => scrollTo(item.toLowerCase().replace("í", "i"))}
@@ -83,9 +98,16 @@ export default function Header() {
                                     {item}
                                 </button>
                             ))}
-                            <button onClick={goToLogin} className="w-full ladico-button-primary mt-4">
-                                Comenzar gratis
-                            </button>
+                            {user ? (
+                                <div onClick={goToDashboard} className="flex items-center space-x-2 px-4 py-3 mt-4 rounded-xl bg-gray-50 border-2 border-gray-100 cursor-pointer hover:border-indigo-300 transition-all">
+                                    <User className="h-5 w-5 text-indigo-500" />
+                                    <span className="font-medium text-indigo-700">{userDisplayName}</span>
+                                </div>
+                            ) : (
+                                <button onClick={goToLogin} className="w-full ladico-button-primary mt-4">
+                                    Comenzar gratis
+                                </button>
+                            )}
                         </div>
                     </div>
                 )}

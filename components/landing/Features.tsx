@@ -89,67 +89,6 @@ export default function Features() {
                         </div>
                     ))}
                 </div>
-
-                {/* Integration Section */}
-                <div className="ladico-card p-12 bg-gradient-to-r from-indigo-50 to-purple-50 border-2 border-indigo-100">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                        <div>
-                            <h3 className="text-3xl font-bold text-gray-900 mb-6">Integración perfecta</h3>
-                            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                                Conecta Ladico con tus herramientas favoritas. Más de 100 integraciones disponibles para optimizar tu
-                                flujo de trabajo.
-                            </p>
-
-                            <div className="grid grid-cols-2 gap-4 mb-8">
-                                {["API REST", "Webhooks", "SDK", "Plugins"].map((tech) => (
-                                    <div
-                                        key={tech}
-                                        className="bg-white border-2 border-indigo-100 rounded-2xl px-4 py-3 text-center font-medium text-indigo-700 hover:border-indigo-200 transition-all"
-                                    >
-                                        {tech}
-                                    </div>
-                                ))}
-                            </div>
-
-                            <button
-                                onClick={() => document.getElementById("contacto")?.scrollIntoView({ behavior: "smooth" })}
-                                className="ladico-button-primary"
-                            >
-                                Ver todas las integraciones
-                            </button>
-                        </div>
-
-                        <div className="relative">
-                            <div className="w-full h-80 bg-white rounded-3xl border-2 border-indigo-100 flex items-center justify-center shadow-sm">
-                                <div className="relative">
-                                    {/* Central hub */}
-                                    <div className="w-24 h-24 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-3xl flex items-center justify-center shadow-lg border-2 border-indigo-200">
-                                        <span className="text-white font-bold text-lg">API</span>
-                                    </div>
-
-                                    {/* Connected services */}
-                                    <div className="absolute -top-12 -left-20 w-16 h-16 bg-blue-100 rounded-2xl border-2 border-blue-200 flex items-center justify-center shadow-md">
-                                        <div className="w-8 h-8 bg-blue-500 rounded-xl"></div>
-                                    </div>
-                                    <div className="absolute -top-12 -right-20 w-16 h-16 bg-green-100 rounded-2xl border-2 border-green-200 flex items-center justify-center shadow-md">
-                                        <div className="w-8 h-8 bg-green-500 rounded-xl"></div>
-                                    </div>
-                                    <div className="absolute -bottom-12 -left-20 w-16 h-16 bg-yellow-100 rounded-2xl border-2 border-yellow-200 flex items-center justify-center shadow-md">
-                                        <div className="w-8 h-8 bg-yellow-500 rounded-xl"></div>
-                                    </div>
-                                    <div className="absolute -bottom-12 -right-20 w-16 h-16 bg-pink-100 rounded-2xl border-2 border-pink-200 flex items-center justify-center shadow-md">
-                                        <div className="w-8 h-8 bg-pink-500 rounded-xl"></div>
-                                    </div>
-
-                                    {/* Connection lines */}
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="w-32 h-32 border-2 border-dashed border-indigo-200 rounded-full animate-pulse-border"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
     )
