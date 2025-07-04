@@ -1,12 +1,20 @@
 "use client"
 
-import { Zap, Shield, Smartphone, Users, BarChart3, Sparkles } from "lucide-react"
+import { Zap, Shield, Smartphone, Users, BarChart3, Sparkles, Trophy } from "lucide-react"
 
 const features = [
     {
+        icon: Trophy,
+        title: "Marco Europeo DigComp 2.1",
+        description: "Basado en el marco oficial de la Comisión Europea para competencias digitales de ciudadanos",
+        color: "from-yellow-400 to-orange-500",
+        borderColor: "border-yellow-200",
+        bgColor: "bg-yellow-50",
+    },
+    {
         icon: Zap,
-        title: "Velocidad Extrema",
-        description: "Rendimiento optimizado que supera expectativas. Cada acción es instantánea.",
+        title: "Resultados Inmediatos",
+        description: "Optimiza tu tiempo con respuestas rápidas y precisas. Eficiencia en cada interacción.",
         color: "from-yellow-400 to-orange-500",
         borderColor: "border-yellow-200",
         bgColor: "bg-yellow-50",
@@ -14,7 +22,7 @@ const features = [
     {
         icon: Shield,
         title: "Seguridad Avanzada",
-        description: "Protección empresarial para tus datos. Tu privacidad es nuestra prioridad.",
+        description: "Protección para tus datos. Tu privacidad es nuestra prioridad.",
         color: "from-green-400 to-emerald-500",
         borderColor: "border-green-200",
         bgColor: "bg-green-50",
@@ -26,30 +34,6 @@ const features = [
         color: "from-blue-400 to-cyan-500",
         borderColor: "border-blue-200",
         bgColor: "bg-blue-50",
-    },
-    {
-        icon: Users,
-        title: "Colaboración Fluida",
-        description: "Trabajo en equipo sin fricciones. Herramientas que potencian la productividad.",
-        color: "from-purple-400 to-pink-500",
-        borderColor: "border-purple-200",
-        bgColor: "bg-purple-50",
-    },
-    {
-        icon: BarChart3,
-        title: "Analytics Inteligente",
-        description: "Insights profundos sobre rendimiento. Decisiones basadas en datos reales.",
-        color: "from-indigo-400 to-purple-500",
-        borderColor: "border-indigo-200",
-        bgColor: "bg-indigo-50",
-    },
-    {
-        icon: Sparkles,
-        title: "IA Integrada",
-        description: "Inteligencia artificial que aprende. Automatización para tareas repetitivas.",
-        color: "from-pink-400 to-rose-500",
-        borderColor: "border-pink-200",
-        bgColor: "bg-pink-50",
     },
 ]
 
@@ -66,9 +50,6 @@ export default function Features() {
                     <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
                         Todo lo que necesitas en <span className="text-indigo-600">una plataforma</span>
                     </h2>
-                    <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                        Descubre las funcionalidades que hacen de Ladico la elección perfecta para transformar tu flujo de trabajo
-                    </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">

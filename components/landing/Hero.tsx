@@ -23,7 +23,7 @@ export default function Hero() {
                             inteligentes y diseño intuitivo.
                         </p>
 
-                        <div className="flex flex-col sm:flex-row gap-4 mb-12">
+                        <div className="flex flex-col sm:flex-row gap-4 mb-12 items-center sm:items-start">
                             <button onClick={() => scrollTo("caracteristicas")} className="ladico-button-primary group">
                                 ¿Qué ofrecemos?
                             </button>
@@ -32,16 +32,16 @@ export default function Hero() {
                         {/* Stats */}
                         <div className="grid grid-cols-3 gap-6">
                             <div className="ladico-stat-card">
-                                <div className="text-3xl font-bold text-indigo-600 mb-2">15K+</div>
-                                <div className="text-gray-600">Usuarios activos</div>
+                                <div className="text-3xl font-bold text-indigo-600 mb-2">Cursos</div>
+                                <div className="text-gray-600">Para diferentes edades y conocimientos.</div>
                             </div>
                             <div className="ladico-stat-card">
-                                <div className="text-3xl font-bold text-purple-600 mb-2">99.9%</div>
-                                <div className="text-gray-600">Uptime</div>
+                                <div className="text-3xl font-bold text-purple-600 mb-2">Ayuda</div>
+                                <div className="text-gray-600">Adecuado para quién sea.</div>
                             </div>
                             <div className="ladico-stat-card">
-                                <div className="text-3xl font-bold text-blue-600 mb-2">24/7</div>
-                                <div className="text-gray-600">Soporte</div>
+                                <div className="text-3xl font-bold text-blue-600 mb-2">Logros</div>
+                                <div className="text-gray-600">Puntajes y miscelaneos para todos.</div>
                             </div>
                         </div>
                     </div>

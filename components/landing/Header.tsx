@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Menu, X, Zap, User } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/AuthContext"
+import Image from "next/image"
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -27,7 +28,7 @@ export default function Header() {
     const goToLogin = () => {
         router.push("/login")
     }
-    
+
     const goToDashboard = () => {
         router.push("/dashboard")
     }
@@ -43,7 +44,11 @@ export default function Header() {
             <div className="max-w-7xl mx-auto px-6">
                 <div className="flex items-center justify-between h-20">
                     {/* Logo */}
-                    <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-2xl border-2 border-indigo-100 shadow-sm">
+                    <div 
+                        className="flex items-center space-x-3 bg-white px-6 py-3 rounded-2xl border-2 border-indigo-100 shadow-sm"
+                        onClick={() => scrollTo('inicio')}
+                        style={{ cursor: 'pointer' }}
+                    >
                         <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center">
                             <Zap className="h-5 w-5 text-white" />
                         </div>
@@ -52,7 +57,7 @@ export default function Header() {
 
                     {/* Desktop Navigation */}
                     <nav className="hidden md:flex space-x-2">
-                        {["Inicio", "Características", "Acerca", "Contacto"].map((item) => (
+                        {["Inicio", "Características"].map((item) => (
                             <button
                                 key={item}
                                 onClick={() => scrollTo(item.toLowerCase().replace("í", "i"))}
@@ -89,7 +94,7 @@ export default function Header() {
                 {isMenuOpen && (
                     <div className="md:hidden pb-6">
                         <div className="bg-white rounded-2xl border-2 border-gray-100 p-6 space-y-3 shadow-lg">
-                            {["Inicio", "Acerca", "Contacto"].map((item) => (
+                            {["Inicio", "Características"].map((item) => (
                                 <button
                                     key={item}
                                     onClick={() => scrollTo(item.toLowerCase().replace("í", "i"))}
