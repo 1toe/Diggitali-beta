@@ -1,9 +1,14 @@
 // Utilidad para manejar los resultados según tu formato JSON
-import { collection, addDoc, query, where, getDocs } from "firebase/firestore"
+import { collection, addDoc, query, where, getDocs, updateDoc, doc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import type { UserResult, TestSession } from "@/types"
 
 export async function saveUserResult(testSession: TestSession): Promise<void> {
+  if (!db) {
+    console.error("Firestore no está inicializado")
+    return
+  }
+
   try {
     const userResult: UserResult = {
       userId: testSession.userId,
@@ -13,7 +18,7 @@ export async function saveUserResult(testSession: TestSession): Promise<void> {
         competence: question.competence,
         respuestaUsuario: testSession.answers[index] ?? -1,
         correcta: testSession.answers[index] === question.correctAnswerIndex,
-        tiempoSegundos: 30, // Placeholder - podrías implementar tracking de tiempo real
+        tiempoSegundos: Math.floor((testSession.endTime?.getTime() || 0 - testSession.startTime.getTime()) / 1000 / testSession.questions.length), // Tiempo promedio por pregunta
       })),
       puntajeTotal: testSession.score,
       nivelDigComp: determineDigCompLevel(testSession.score),
@@ -28,6 +33,11 @@ export async function saveUserResult(testSession: TestSession): Promise<void> {
 }
 
 export async function getUserResults(userId: string): Promise<UserResult[]> {
+  if (!db) {
+    console.error("Firestore no está inicializado")
+    return []
+  }
+
   try {
     const q = query(collection(db, "userResults"), where("userId", "==", userId))
 
@@ -51,12 +61,4 @@ function determineDigCompLevel(score: number): string {
   return "Básico"
 }
 
-export async function updateQuestionStats(questionId: string, wasCorrect: boolean): Promise<void> {
-  try {
-    // Aquí podrías implementar la lógica para actualizar vecesUtilizada y tasaAcierto
-    // de las preguntas en Firestore
-    console.log(`Actualizando estadísticas para pregunta ${questionId}: ${wasCorrect ? "correcta" : "incorrecta"}`)
-  } catch (error) {
-    console.error("Error al actualizar estadísticas:", error)
-  }
-}
+// Esta función se ha movido al servicio questionsService.ts para una mejor organización

@@ -3,14 +3,15 @@
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/AuthContext"
-import { collection, query, where, getDocs, addDoc, updateDoc, doc } from "firebase/firestore"
+import { collection, addDoc, updateDoc, doc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import type { Question, TestSession } from "@/types"
 import TestInterface from "@/components/TestInterface"
 import { useToast } from "@/hooks/use-toast"
 
-// Importa la nueva utilidad al inicio del archivo
+// Importamos las utilidades
 import { saveUserResult } from "@/utils/results-manager"
+import { loadQuestionsByCompetence, updateQuestionStats } from "@/services/questionsService"
 
 export default function TestPage() {
   const params = useParams()
@@ -62,28 +63,19 @@ export default function TestPage() {
         setLoading(false)
         return
       }
-
-      // Cargar preguntas de nivel básico para la competencia
-      const q = query(
-        collection(db, "questions"),
-        where("competence", "==", competenceId),
-        where("level", "in", ["Básico 1", "Básico 2"]),
-      )
-
-      const querySnapshot = await getDocs(q)
-      const loadedQuestions: Question[] = []
-
-      querySnapshot.forEach((doc) => {
-        loadedQuestions.push({ id: doc.id, ...doc.data() } as Question)
-      })
+      
+      // Primero intentamos cargar las preguntas desde Firestore utilizando el servicio
+      console.log(`Cargando preguntas para competencia: ${competenceId}`)
+      
+      const loadedQuestions = await loadQuestionsByCompetence(competenceId, "Básico", 3)
 
       if (loadedQuestions.length < 3) {
         // Si no hay suficientes preguntas, crear preguntas de ejemplo
         finalQuestions = createSampleQuestions(competenceId)
         console.log("Usando preguntas de ejemplo para competencia:", competenceId)
       } else {
-        // Seleccionar 3 preguntas aleatorias
-        finalQuestions = loadedQuestions.sort(() => 0.5 - Math.random()).slice(0, 3)
+        // Usar las preguntas cargadas de Firestore
+        finalQuestions = loadedQuestions
         console.log("Usando preguntas de Firestore para competencia:", competenceId)
       }
 
@@ -591,11 +583,18 @@ export default function TestPage() {
     try {
       // Calcular puntuación
       let correctAnswers = 0
-      finalSession.questions.forEach((question, index) => {
-        if (finalSession.answers[index] === question.correctAnswerIndex) {
+      
+      // Para cada pregunta, actualizar sus estadísticas y contar las respuestas correctas
+      await Promise.all(finalSession.questions.map(async (question, index) => {
+        const wasCorrect = finalSession.answers[index] === question.correctAnswerIndex
+        
+        if (wasCorrect) {
           correctAnswers++
         }
-      })
+        
+        // Actualizar estadísticas de la pregunta en Firestore
+        await updateQuestionStats(question.id, wasCorrect)
+      }))
 
       const score = Math.round((correctAnswers / finalSession.questions.length) * 100)
       const passed = correctAnswers >= 2 // Necesita 2 de 3 correctas

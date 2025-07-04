@@ -6,6 +6,8 @@ import { useEffect } from "react"
 import Sidebar from "@/components/Sidebar"
 import CompetenceCard from "@/components/CompetenceCard"
 import type { Competence } from "@/types"
+import { useCompetenceProgress } from "@/hooks/useCompetenceProgress"
+import { useQuestionsCount } from "@/hooks/useQuestionsCount"
 
 const competences: Competence[] = [
   {
@@ -69,6 +71,8 @@ const competences: Competence[] = [
 
 export default function Dashboard() {
   const { user, userData, loading } = useAuth()
+  const { progress, loading: loadingProgress } = useCompetenceProgress()
+  const { counts, loading: loadingCounts } = useQuestionsCount()
   const router = useRouter()
 
   useEffect(() => {
@@ -77,7 +81,7 @@ export default function Dashboard() {
     }
   }, [user, loading, router])
 
-  if (loading) {
+  if (loading || loadingProgress || loadingCounts) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
@@ -119,7 +123,17 @@ export default function Dashboard() {
               <CompetenceCard
                 key={competence.id}
                 competence={competence}
-                userProgress={userData.completedCompetences.includes(competence.id) ? 100 : 0}
+                userProgress={
+                  // Si la competencia está marcada como completada, mostrar 100%
+                  userData.completedCompetences.includes(competence.id) 
+                    ? 100 
+                    // Si hay progreso registrado para esta competencia, mostrar ese valor
+                    : progress[competence.id] !== undefined 
+                      ? progress[competence.id] 
+                      // Si no hay datos, mostrar 0
+                      : 0
+                }
+                questionCount={counts[competence.id] || 0}
               />
             ))}
           </div>
