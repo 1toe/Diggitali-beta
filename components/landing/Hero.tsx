@@ -52,33 +52,78 @@ export default function Hero() {
                             {/* Main visual */}
                             <div className="relative">
                                 <div className="w-full h-80 bg-gradient-to-br from-white to-indigo-50 rounded-3xl border-2 border-indigo-100 flex items-center justify-center mb-8">
-                                    <div className="text-center">
-                                        <div className="w-24 h-24 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-lg border-2 border-indigo-200">
-                                            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center">
-                                                <div className="w-6 h-6 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg"></div>
-                                            </div>
+                                    <img
+                                        src="/ladico.png"
+                                        alt="Ladico Logo"
+                                        className="w-24 h-24 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-lg border-2 border-indigo-200"
+                                    />
+                                </div>
+
+                                {/* Floating cards */}
+                                {/* Card 1: Información */}
+                                <div
+                                    className="absolute -top-6 -right-6 w-28 h-[90px] bg-white rounded-xl shadow-lg animate-float border border-gray-200"
+                                    style={{ animationDelay: "1.0s" }}
+                                >
+                                    <div className="flex flex-col items-center justify-center h-full">
+                                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-2">
+                                            <span className="text-xl">🔍</span>
                                         </div>
-                                        <div className="space-y-3">
-                                            <div className="h-4 bg-indigo-200 rounded-2xl w-48 mx-auto border border-indigo-300"></div>
-                                            <div className="h-3 bg-purple-200 rounded-2xl w-32 mx-auto border border-purple-300"></div>
-                                            <div className="h-3 bg-blue-200 rounded-2xl w-40 mx-auto border border-blue-300"></div>
-                                        </div>
+                                        <span className="text-gray-700 text-sm">Información</span>
                                     </div>
                                 </div>
 
-                                {/* Floating elements */}
+                                {/* Card 2: Comunicación */}
                                 <div
-                                    className="absolute -top-6 -right-6 w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-3xl shadow-lg animate-float border-2 border-yellow-300"
-                                    style={{ animationDelay: "1s" }}
-                                ></div>
+                                    className="absolute -bottom-6 -right-6 w-28 h-[90px] bg-white rounded-xl shadow-lg animate-float border border-gray-200"
+                                    style={{ animationDelay: "1.5s" }}
+                                >
+                                    <div className="flex flex-col items-center justify-center h-full">
+                                        <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center mb-2">
+                                            <span className="text-xl">💬</span>
+                                        </div>
+                                        <span className="text-gray-700 text-sm">Comunicación</span>
+                                    </div>
+                                </div>
+
+                                {/* Card 3: Creación */}
                                 <div
-                                    className="absolute -bottom-6 -left-6 w-16 h-16 bg-gradient-to-r from-green-400 to-emerald-400 rounded-2xl shadow-lg animate-float border-2 border-green-300"
-                                    style={{ animationDelay: "2s" }}
-                                ></div>
+                                    className="absolute -bottom-6 -left-6 w-28 h-[90px] bg-white rounded-xl shadow-lg animate-float border border-gray-200"
+                                    style={{ animationDelay: "2.0s" }}
+                                >
+                                    <div className="flex flex-col items-center justify-center h-full">
+                                        <div className="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center mb-2">
+                                            <span className="text-xl">🎨</span>
+                                        </div>
+                                        <span className="text-gray-700 text-sm">Creación</span>
+                                    </div>
+                                </div>
+
+                                {/* Card 4: Seguridad */}
                                 <div
-                                    className="absolute top-1/2 -left-8 w-12 h-12 bg-gradient-to-r from-pink-400 to-rose-400 rounded-2xl shadow-lg animate-float border-2 border-pink-300"
-                                    style={{ animationDelay: "3s" }}
-                                ></div>
+                                    className="absolute top-1/2 -left-8 w-28 h-[90px] bg-white rounded-xl shadow-lg animate-float border border-gray-200"
+                                    style={{ animationDelay: "2.5s" }}
+                                >
+                                    <div className="flex flex-col items-center justify-center h-full">
+                                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-2">
+                                            <span className="text-xl">🛡️</span>
+                                        </div>
+                                        <span className="text-gray-700 text-sm">Seguridad</span>
+                                    </div>
+                                </div>
+
+                                {/* Card 5: Resolución */}
+                                <div
+                                    className="absolute top-1/4 -right-8 w-28 h-[90px] bg-white rounded-xl shadow-lg animate-float border border-gray-200"
+                                    style={{ animationDelay: "3.0s" }}
+                                >
+                                    <div className="flex flex-col items-center justify-center h-full">
+                                        <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mb-2">
+                                            <span className="text-xl">⚙️</span>
+                                        </div>
+                                        <span className="text-gray-700 text-sm">Resolución</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
