@@ -18,8 +18,10 @@ export default function Footer() {
                             <span className="text-3xl font-bold">Ladico</span>
                         </div>
                         <p className="text-gray-400 mb-8 max-w-md leading-relaxed">
-                            Transformando la manera en que interactúas con la tecnología. Una experiencia única, intuitiva y poderosa
-                            para profesionales y equipos de todo el mundo.
+                            Transformando la manera en que interactúas con la tecnología.
+                        </p>
+                        <p className="text-gray-400 mb-8 max-w-md leading-relaxed">
+                            {currentYear} Ladico. Todos los derechos reservados.
                         </p>
                     </div>
                 </div>
