@@ -221,7 +221,7 @@ export default function AdminPanel() {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full Ladico-button-primary">
+              <Button type="submit" className="w-full pix-button-primary">
                 Agregar Pregunta
               </Button>
             </form>

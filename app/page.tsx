@@ -5,13 +5,13 @@ import Header from "@/components/landing/Header"
 import Hero from "@/components/landing/Hero"
 import Features from "@/components/landing/Features"
 import Footer from "@/components/landing/Footer"
-import { analytics } from "@/lib/firebase"
+import { getFirebaseAnalytics } from "@/lib/firebase"
 
 export default function LandicoLanding() {
   useEffect(() => {
-    // Initialize Firebase Analytics only in browser environment
-    if (typeof window !== "undefined" && analytics) {
-      console.log("Firebase Analytics initialized")
+    const analytics = getFirebaseAnalytics()
+    if (analytics) {
+      console.log("Firebase Analytics initialized successfully")
     }
   }, [])
 
@@ -21,6 +21,7 @@ export default function LandicoLanding() {
       <main>
         <Hero />
         <Features />
+
       </main>
       <Footer />
     </div>

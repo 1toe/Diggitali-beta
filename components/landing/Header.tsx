@@ -1,79 +1,90 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { Menu, X, Zap } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { Menu, X } from "lucide-react"
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
-    const router = useRouter()
+    const [isScrolled, setIsScrolled] = useState(false)
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 10)
+        }
+        window.addEventListener("scroll", handleScroll)
+        return () => window.removeEventListener("scroll", handleScroll)
+    }, [])
 
     const scrollTo = (id: string) => {
         document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
         setIsMenuOpen(false)
     }
+    const router = useRouter()
 
     const goToLogin = () => {
         router.push("/login")
     }
 
+
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-b-2 border-gray-100">
-            <div className="max-w-6xl mx-auto px-6">
+        <header
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white/90 backdrop-blur-sm border-b-2 border-gray-100" : "bg-transparent"
+                }`}
+        >
+            <div className="max-w-7xl mx-auto px-6">
                 <div className="flex items-center justify-between h-20">
                     {/* Logo */}
-                    <div className="text-3xl font-bold text-indigo-600 bg-white px-6 py-2 rounded-2xl border-2 border-indigo-100">
-                        Ladico
+                    <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-2xl border-2 border-indigo-100 shadow-sm">
+                        <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center">
+                            <Zap className="h-5 w-5 text-white" />
+                        </div>
+                        <span className="text-2xl font-bold text-indigo-600">Ladico</span>
                     </div>
 
-                    {/* Desktop Menu */}
+                    {/* Desktop Navigation */}
                     <nav className="hidden md:flex space-x-2">
-                        <button
-                            onClick={() => scrollTo("inicio")}
-                            className="px-6 py-3 rounded-xl hover:bg-gray-100 transition-all"
-                        >
-                            Inicio
-                        </button>
-                        <button
-                            onClick={() => scrollTo("features")}
-                            className="px-6 py-3 rounded-xl hover:bg-gray-100 transition-all"
-                        >
-                            Features
-                        </button>
+                        {["Inicio", "Características", "Acerca", "Contacto"].map((item) => (
+                            <button
+                                key={item}
+                                onClick={() => scrollTo(item.toLowerCase().replace("í", "i"))}
+                                className="px-6 py-3 rounded-xl hover:bg-white hover:border-2 hover:border-gray-100 transition-all font-medium"
+                            >
+                                {item}
+                            </button>
+                        ))}
                     </nav>
+
 
                     {/* CTA */}
                     <button onClick={goToLogin} className="hidden md:block ladico-button">
                         Comenzar
                     </button>
 
-                    {/* Mobile Menu */}
+                    {/* Mobile Menu Button */}
                     <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className="md:hidden p-3 rounded-xl border-2 border-gray-200 bg-white"
+                        className="md:hidden p-3 rounded-xl border-2 border-gray-200 bg-white hover:border-indigo-200 transition-all"
                     >
                         {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                     </button>
                 </div>
 
-                {/* Mobile Menu Dropdown */}
+                {/* Mobile Menu */}
                 {isMenuOpen && (
                     <div className="md:hidden pb-6">
-                        <div className="bg-white rounded-2xl border-2 border-gray-100 p-4 space-y-2">
-                            <button
-                                onClick={() => scrollTo("inicio")}
-                                className="block w-full text-left px-4 py-3 rounded-xl hover:bg-gray-50"
-                            >
-                                Inicio
-                            </button>
-                            <button
-                                onClick={() => scrollTo("features")}
-                                className="block w-full text-left px-4 py-3 rounded-xl hover:bg-gray-50"
-                            >
-                                Features
-                            </button>
-                            <button onClick={goToLogin} className="w-full ladico-button mt-4">
-                                Comenzar
+                        <div className="bg-white rounded-2xl border-2 border-gray-100 p-6 space-y-3 shadow-lg">
+                            {["Inicio", "Características", "Acerca", "Contacto"].map((item) => (
+                                <button
+                                    key={item}
+                                    onClick={() => scrollTo(item.toLowerCase().replace("í", "i"))}
+                                    className="block w-full text-left px-4 py-3 rounded-xl hover:bg-gray-50 border-2 border-transparent hover:border-gray-100 transition-all"
+                                >
+                                    {item}
+                                </button>
+                            ))}
+                            <button onClick={goToLogin} className="w-full ladico-button-primary mt-4">
+                                Comenzar gratis
                             </button>
                         </div>
                     </div>
