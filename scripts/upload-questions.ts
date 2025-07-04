@@ -5,7 +5,13 @@ import { initializeApp } from "firebase/app"
 import { getFirestore, collection, addDoc } from "firebase/firestore"
 
 const firebaseConfig = {
-  // Tu configuración de Firebase aquí
+  apiKey: "AIzaSyCOFq_3nQaLr84G9OdvH1TNZYexvrqfwhw",
+  authDomain: "ludico-backend.firebaseapp.com",
+  projectId: "ludico-backend",
+  storageBucket: "ludico-backend.firebasestorage.app",
+  messagingSenderId: "663116086194",
+  appId: "1:663116086194:web:ebb51b7246f147a25d82ab",
+  measurementId: "G-2WE2ZG3FF8",
 }
 
 const app = initializeApp(firebaseConfig)
