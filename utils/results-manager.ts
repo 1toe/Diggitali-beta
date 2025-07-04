@@ -5,8 +5,9 @@ import type { UserResult, TestSession } from "@/types"
 
 export async function saveUserResult(testSession: TestSession): Promise<void> {
   if (!db) {
-    console.error("Firestore no está inicializado")
-    return
+    const error = new Error("Firestore no está inicializado. Por favor, comprueba tu conexión a Internet.")
+    console.error(error)
+    throw error
   }
 
   try {
@@ -34,8 +35,9 @@ export async function saveUserResult(testSession: TestSession): Promise<void> {
 
 export async function getUserResults(userId: string): Promise<UserResult[]> {
   if (!db) {
-    console.error("Firestore no está inicializado")
-    return []
+    const error = new Error("Firestore no está inicializado. Por favor, comprueba tu conexión a Internet.")
+    console.error(error)
+    throw error
   }
 
   try {

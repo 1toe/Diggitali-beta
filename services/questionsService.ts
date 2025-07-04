@@ -38,7 +38,7 @@ export async function loadQuestionsByCompetence(competenceId: string, level: str
         .slice(0, count) // Tomamos solo las que necesitamos
     }
     
-    // Si no hay suficientes preguntas, intentamos cargar de todos los niveles
+    // Si no hay suficientes preguntas del nivel específico, intentamos cargar de todos los niveles
     const fallbackQuery = query(
       collection(db, "questions"),
       where("competence", "==", competenceId),
@@ -61,11 +61,12 @@ export async function loadQuestionsByCompetence(competenceId: string, level: str
         .slice(0, count)
     }
     
-    // Si aún no tenemos suficientes, devolvemos lo que hayamos encontrado
-    return fallbackQuestions
+    // Si aún no tenemos suficientes, lanzamos un error
+    throw new Error(`No hay suficientes preguntas para la competencia ${competenceId}. Se requieren al menos ${count} preguntas.`)
   } catch (error) {
     console.error("Error al cargar preguntas:", error)
-    return []
+    // Siempre propagar el error hacia arriba para que la UI pueda mostrar el mensaje
+    throw error
   }
 }
 
