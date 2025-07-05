@@ -31,7 +31,7 @@
   }
 
   .Ladico-card {
-    @apply bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300;
+    @apply bg-white rounded-2xl shadow-lg border-2 border-gray-100 hover:border-indigo-200 hover:shadow-xl transition-all duration-300;
   }
 
   .Ladico-button-primary {

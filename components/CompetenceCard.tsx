@@ -34,7 +34,7 @@ export default function CompetenceCard({ competence, userProgress, questionCount
   }
 
   return (
-    <div className="Ladico-card p-6 cursor-pointer hover:scale-105 transition-transform" onClick={handleStartTest}>
+    <div className="Ladico-card p-6 mb-4 transition-transform rounded-xl shadow-md border-2 border-gray-100 hover:border-indigo-200">
       <div className="mb-4 flex justify-between items-center">
         <div
           className={`inline-block px-3 py-1 rounded-full text-xs font-medium text-white bg-gradient-to-r ${competence.color}`}
@@ -49,7 +49,7 @@ export default function CompetenceCard({ competence, userProgress, questionCount
         )}
       </div>
 
-      <div className={`h-32 rounded-lg bg-gradient-to-br ${competence.color} mb-4 flex items-center justify-center`}>
+      <div className={`h-32 rounded-xl bg-gradient-to-br ${competence.color} mb-4 flex items-center justify-center`}>
         <h3 className="text-white font-bold text-center px-4 leading-tight">{competence.name}</h3>
       </div>
 
@@ -87,6 +87,15 @@ export default function CompetenceCard({ competence, userProgress, questionCount
           </span>
         </div>
       )}
+      
+      <div className="mt-4 flex justify-center">
+        <button 
+          onClick={handleStartTest}
+          className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-sm hover:shadow-md"
+        >
+          Comenzar
+        </button>
+      </div>
     </div>
   )
 }

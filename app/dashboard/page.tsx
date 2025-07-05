@@ -103,7 +103,7 @@ export default function Dashboard() {
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Competencias</h1>
                 <p className="text-gray-600">
                   Evalúate a tu propio ritmo en las competencias digitales. Elige una competencia y comienza a ganar
-                  Ladico.
+                  Ladicos.
                 </p>
               </div>
 
@@ -111,7 +111,7 @@ export default function Dashboard() {
                 <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center text-white mb-2">
                   <div>
                     <div className="text-2xl font-bold">{userData.LadicoScore}</div>
-                    <div className="text-xs">Ladico</div>
+                    <div className="text-xs">Ladicos</div>
                   </div>
                 </div>
               </div>
@@ -125,11 +125,11 @@ export default function Dashboard() {
                 competence={competence}
                 userProgress={
                   // Si la competencia está marcada como completada, mostrar 100%
-                  userData.completedCompetences.includes(competence.id) 
-                    ? 100 
+                  userData.completedCompetences.includes(competence.id)
+                    ? 100
                     // Si hay progreso registrado para esta competencia, mostrar ese valor
-                    : progress[competence.id] !== undefined 
-                      ? progress[competence.id] 
+                    : progress[competence.id] !== undefined
+                      ? progress[competence.id]
                       // Si no hay datos, mostrar 0
                       : 0
                 }
