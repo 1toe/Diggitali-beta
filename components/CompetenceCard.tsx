@@ -2,6 +2,11 @@
 
 import type { Competence } from "@/types"
 import { useRouter } from "next/navigation"
+import { Card, CardContent, CardDescription, CardFooter } from "@/components/ui/card"
+import { AlertCircle } from "lucide-react"
+import { Progress } from "@/components/ui/progress"
+import { Button } from "@/components/ui/button"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 interface CompetenceCardProps {
   competence: Competence
@@ -11,9 +16,12 @@ interface CompetenceCardProps {
 
 export default function CompetenceCard({ competence, userProgress, questionCount = 0 }: CompetenceCardProps) {
   const router = useRouter()
+  const hasEnoughQuestions = questionCount >= 3
 
   const handleStartTest = () => {
-    router.push(`/test/${competence.id}`)
+    if (hasEnoughQuestions) {
+      router.push(`/test/${competence.id}`)
+    } 
   }
   
   // Determinar el nivel basado en el progreso
@@ -34,68 +42,44 @@ export default function CompetenceCard({ competence, userProgress, questionCount
   }
 
   return (
-    <div className="Ladico-card p-6 mb-4 transition-transform rounded-xl shadow-md border-2 border-gray-100 hover:border-indigo-200">
-      <div className="mb-4 flex justify-between items-center">
-        <div
-          className={`inline-block px-3 py-1 rounded-full text-xs font-medium text-white bg-gradient-to-r ${competence.color}`}
-        >
-          {competence.dimension.toUpperCase()}
-        </div>
-        
-        {userProgress > 0 && (
-          <div className="text-xs font-medium text-gray-600">
-            {getProgressLevel()}
-          </div>
+    <Card className="overflow-hidden shadow-md border border-gray-200 hover:shadow-lg transition-shadow">
+      {/* Cabecera coloreada */}
+      <div className={`h-2 bg-gradient-to-r ${competence.color}`}></div>
+
+      <CardContent className="pt-6 px-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-1">{competence.name}</h3>
+        <CardDescription className="text-sm text-gray-600 mb-4 line-clamp-3">
+          {competence.description}
+        </CardDescription>
+
+        {/* Alerta si no hay suficientes preguntas */}
+        {!hasEnoughQuestions && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              No hay suficientes preguntas para esta competencia (se requieren al menos 3).
+            </AlertDescription>
+          </Alert>
         )}
-      </div>
 
-      <div className={`h-32 rounded-xl bg-gradient-to-br ${competence.color} mb-4 flex items-center justify-center`}>
-        <h3 className="text-white font-bold text-center px-4 leading-tight">{competence.name}</h3>
-      </div>
-
-      <div className="flex items-center justify-center mb-4">
-        <div className="relative w-16 h-16">
-          <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
-            <path
-              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-              fill="none"
-              stroke="#e5e7eb"
-              strokeWidth="2"
-            />
-            <path
-              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-              fill="none"
-              stroke={getProgressColor()}
-              strokeWidth="2"
-              strokeDasharray={`${userProgress}, 100`}
-            />
-          </svg>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-sm font-semibold text-gray-600">
-              {userProgress > 0 ? `${userProgress}%` : "NIVEL"}
-            </span>
+        <div className="mt-2">
+          <div className="flex justify-between items-center text-sm mb-1">
+            <span className="text-gray-500">Progreso</span>
+            <span className="font-medium">{userProgress}%</span>
           </div>
+          <Progress value={userProgress} className="h-2" />
         </div>
-      </div>
+      </CardContent>
 
-      <p className="text-sm text-gray-600 text-center leading-relaxed">{competence.description}</p>
-      
-      {questionCount > 0 && (
-        <div className="mt-3 text-xs text-center text-gray-500">
-          <span className="bg-gray-100 px-2 py-1 rounded-full">
-            {questionCount} preguntas disponibles
-          </span>
-        </div>
-      )}
-      
-      <div className="mt-4 flex justify-center">
-        <button 
-          onClick={handleStartTest}
-          className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-sm hover:shadow-md"
+      <CardFooter className="bg-gray-50 px-6 py-4 border-t border-gray-100">
+        <Button 
+          onClick={handleStartTest} 
+          className="w-full Ladico-button-primary" 
+          disabled={!hasEnoughQuestions}
         >
-          Comenzar
-        </button>
-      </div>
-    </div>
+          {userProgress === 100 ? "Evaluar nuevamente" : hasEnoughQuestions ? "Comenzar evaluación" : "No disponible"}
+        </Button>
+      </CardFooter>
+    </Card>
   )
 }

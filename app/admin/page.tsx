@@ -2,105 +2,172 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/AuthContext"
-import { collection, addDoc } from "firebase/firestore"
+import { collection, addDoc, deleteDoc, getDocs } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
+import { Upload, FileText, AlertCircle } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 export default function AdminPanel() {
-  const { user } = useAuth()
+  const { user, userData } = useAuth()
   const { toast } = useToast()
+  const router = useRouter()
+  const [uploading, setUploading] = useState(false)
+  const [fileContent, setFileContent] = useState<string | null>(null)
+  const [fileError, setFileError] = useState<string | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
 
-  const [questionData, setQuestionData] = useState({
-    competence: "",
-    level: "Básico 2",
-    dimension: "",
-    title: "",
-    scenario: "",
-    options: ["", "", "", ""],
-    correctAnswerIndex: 0,
-    correctFeedback: "",
-    incorrectFeedback: "",
-  })
+  useEffect(() => {
+    // Verificar si el usuario es administrador (correo termina en @admin.com)
+    if (user && user.email) {
+      setIsAdmin(user.email.endsWith('@admin.com'))
+    } else {
+      setIsAdmin(false)
+    }
+  }, [user])
 
-  const competences = [
-    { id: "1.1", name: "Navegar, buscar y filtrar", dimension: "Información y alfabetización informacional" },
-    { id: "1.2", name: "Evaluar datos e información", dimension: "Información y alfabetización informacional" },
-    { id: "1.3", name: "Gestión de datos", dimension: "Información y alfabetización informacional" },
-    { id: "4.1", name: "Proteger dispositivos", dimension: "Seguridad" },
-    { id: "4.2", name: "Proteger datos personales", dimension: "Seguridad" },
-    { id: "4.3", name: "Proteger salud y bienestar", dimension: "Seguridad" },
-    { id: "4.4", name: "Proteger medio ambiente", dimension: "Seguridad" },
-  ]
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFileError(null)
+    const file = e.target.files?.[0]
+    if (!file) return
 
-  const handleCompetenceChange = (competenceId: string) => {
-    const competence = competences.find((c) => c.id === competenceId)
-    setQuestionData({
-      ...questionData,
-      competence: competenceId,
-      dimension: competence?.dimension || "",
-    })
-  }
-
-  const handleOptionChange = (index: number, value: string) => {
-    const newOptions = [...questionData.options]
-    newOptions[index] = value
-    setQuestionData({ ...questionData, options: newOptions })
+    const reader = new FileReader()
+    reader.onload = async (event) => {
+      try {
+        const content = event.target?.result as string
+        JSON.parse(content)
+        setFileContent(content)
+      } catch (error) {
+        setFileError("El archivo no contiene JSON válido")
+        setFileContent(null)
+      }
+    }
+    reader.readAsText(file)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!fileContent) {
+      setFileError("No se ha cargado ningún archivo")
+      return
+    }
+
+    setUploading(true)
 
     try {
-      const question = {
-        type: "multiple-choice",
-        competence: questionData.competence,
-        level: questionData.level,
-        dimension: questionData.dimension,
-        title: questionData.title,
-        scenario: questionData.scenario,
-        options: questionData.options,
-        correctAnswerIndex: questionData.correctAnswerIndex,
-        feedback: {
-          correct: questionData.correctFeedback,
-          incorrect: questionData.incorrectFeedback,
-        },
-        createdAt: new Date(),
-        updatedAt: new Date(),
+      // Parsear el contenido del archivo
+      const questions = JSON.parse(fileContent)
+
+      // Verificar si es un array o un objeto individual
+      const questionsArray = Array.isArray(questions) ? questions : [questions]
+
+      // Validar la estructura de cada pregunta
+      const validQuestions = questionsArray.filter(question => {
+        return (
+          question.type === "multiple-choice" &&
+          question.competence &&
+          question.level &&
+          question.title &&
+          question.scenario &&
+          Array.isArray(question.options) &&
+          question.options.length >= 2 &&
+          typeof question.correctAnswerIndex === "number" &&
+          question.feedback &&
+          question.feedback.correct &&
+          question.feedback.incorrect
+        )
+      })
+
+      if (validQuestions.length === 0) {
+        throw new Error("No hay preguntas válidas en el archivo. Verifica el formato.")
       }
 
-      await addDoc(collection(db, "questions"), question)
+      if (validQuestions.length !== questionsArray.length) {
+        toast({
+          title: "Advertencia",
+          description: `Solo ${validQuestions.length} de ${questionsArray.length} preguntas tienen formato válido.`,
+          variant: "warning",
+        })
+      }
+
+      // Añadir las preguntas a Firestore
+      let addedCount = 0
+      for (const question of validQuestions) {
+        await addDoc(collection(db, "questions"), {
+          ...question,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          vecesUtilizada: 0,
+          tasaAcierto: 0,
+        })
+        addedCount++
+      }
 
       toast({
-        title: "Pregunta agregada",
-        description: "La pregunta ha sido guardada exitosamente en la base de datos.",
+        title: "Éxito",
+        description: `Se han agregado ${addedCount} preguntas a la base de datos.`,
       })
 
-      // Reset form
-      setQuestionData({
-        competence: "",
-        level: "Básico 2",
-        dimension: "",
-        title: "",
-        scenario: "",
-        options: ["", "", "", ""],
-        correctAnswerIndex: 0,
-        correctFeedback: "",
-        incorrectFeedback: "",
-      })
+      // Limpiar el estado
+      setFileContent(null)
+
+      // Limpiar el input file (necesitamos hacer esto manualmente)
+      const fileInput = document.getElementById("fileInput") as HTMLInputElement
+      if (fileInput) {
+        fileInput.value = ""
+      }
     } catch (error) {
+      console.error("Error al procesar el archivo:", error)
+      setFileError(error instanceof Error ? error.message : "Error desconocido al procesar el archivo")
       toast({
         title: "Error",
-        description: "No se pudo guardar la pregunta. Intenta nuevamente.",
+        description: error instanceof Error ? error.message : "Error al procesar el archivo.",
         variant: "destructive",
       })
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const handleDeleteAllQuestions = async () => {
+    if (!db || !isAdmin) return
+
+    if (!confirm("¿Estás seguro? Esta acción eliminará TODAS las preguntas de la base de datos y no se puede deshacer.")) {
+      return
+    }
+
+    try {
+      setUploading(true)
+      const querySnapshot = await getDocs(collection(db, "questions"))
+      let deletedCount = 0
+
+      // Eliminar cada documento
+      for (const document of querySnapshot.docs) {
+        await deleteDoc(document.ref)
+        deletedCount++
+      }
+
+      toast({
+        title: "Base de datos limpiada",
+        description: `Se han eliminado ${deletedCount} preguntas.`,
+      })
+    } catch (error) {
+      console.error("Error al eliminar preguntas:", error)
+      toast({
+        title: "Error",
+        description: "No se pudieron eliminar todas las preguntas.",
+        variant: "destructive",
+      })
+    } finally {
+      setUploading(false)
     }
   }
 
@@ -117,113 +184,93 @@ export default function AdminPanel() {
       <div className="max-w-4xl mx-auto">
         <Card>
           <CardHeader>
-            <CardTitle>Panel de Administración - Agregar Pregunta</CardTitle>
+            <CardTitle className="flex items-center">
+              <FileText className="h-6 w-6 mr-2" />
+              Panel de Administración - Cargar Preguntas
+            </CardTitle>
           </CardHeader>
           <CardContent>
+            {fileError && (
+              <Alert variant="destructive" className="mb-6">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{fileError}</AlertDescription>
+              </Alert>
+            )}
+
+            <div className="mb-8">
+              <h2 className="text-lg font-medium mb-4">Formato requerido</h2>
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4 overflow-auto">
+                <pre className="text-xs text-gray-800">{`{
+  "type": "multiple-choice",
+  "competence": "1.1",
+  "level": "Básico 2",
+  "title": "Título de la pregunta",
+  "scenario": "Escenario o contexto de la pregunta",
+  "options": [
+    "Opción A: Primera opción", 
+    "Opción B: Segunda opción", 
+    "Opción C: Tercera opción", 
+    "Opción D: Cuarta opción"
+  ],
+  "correctAnswerIndex": 0,
+  "feedback": {
+    "correct": "Retroalimentación para respuesta correcta",
+    "incorrect": "Retroalimentación para respuesta incorrecta"
+  }
+}`}</pre>
+              </div>
+              <p className="text-sm text-gray-600">
+                El archivo debe contener un solo objeto JSON o un array de objetos con la estructura mostrada arriba.
+                <br />
+                <strong>Nota:</strong> El índice de la respuesta correcta (correctAnswerIndex) empieza en 0 para la primera opción.
+              </p>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="competence">Competencia</Label>
-                  <Select onValueChange={handleCompetenceChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecciona competencia" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {competences.map((comp) => (
-                        <SelectItem key={comp.id} value={comp.id}>
-                          {comp.id} - {comp.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="level">Nivel</Label>
-                  <Select onValueChange={(value) => setQuestionData({ ...questionData, level: value })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecciona nivel" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Básico 1">Básico 1</SelectItem>
-                      <SelectItem value="Básico 2">Básico 2</SelectItem>
-                      <SelectItem value="Intermedio 1">Intermedio 1</SelectItem>
-                      <SelectItem value="Intermedio 2">Intermedio 2</SelectItem>
-                      <SelectItem value="Avanzado 1">Avanzado 1</SelectItem>
-                      <SelectItem value="Avanzado 2">Avanzado 2</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="title">Título de la pregunta</Label>
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                <Upload className="h-10 w-10 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">Selecciona un archivo JSON</h3>
+                <p className="text-sm text-gray-500 mb-4">
+                  Arrastra y suelta un archivo o haz clic para seleccionarlo
+                </p>
                 <Input
-                  id="title"
-                  value={questionData.title}
-                  onChange={(e) => setQuestionData({ ...questionData, title: e.target.value })}
-                  required
+                  id="fileInput"
+                  type="file"
+                  accept=".json"
+                  onChange={handleFileChange}
+                  className="hidden"
                 />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="scenario">Escenario</Label>
-                <Textarea
-                  id="scenario"
-                  value={questionData.scenario}
-                  onChange={(e) => setQuestionData({ ...questionData, scenario: e.target.value })}
-                  rows={3}
-                  required
-                />
-              </div>
-
-              <div className="space-y-4">
-                <Label>Opciones de respuesta</Label>
-                {questionData.options.map((option, index) => (
-                  <div key={index} className="flex items-center space-x-2">
-                    <input
-                      type="radio"
-                      name="correct"
-                      checked={questionData.correctAnswerIndex === index}
-                      onChange={() => setQuestionData({ ...questionData, correctAnswerIndex: index })}
-                    />
-                    <Input
-                      placeholder={`Opción ${index + 1}`}
-                      value={option}
-                      onChange={(e) => handleOptionChange(index, e.target.value)}
-                      required
-                    />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => document.getElementById("fileInput")?.click()}
+                  className="mb-2"
+                >
+                  Seleccionar archivo
+                </Button>
+                {fileContent && (
+                  <div className="text-sm text-green-600 mt-2">
+                    ✓ Archivo JSON válido cargado y listo para procesar
                   </div>
-                ))}
+                )}
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="correctFeedback">Feedback para respuesta correcta</Label>
-                  <Textarea
-                    id="correctFeedback"
-                    value={questionData.correctFeedback}
-                    onChange={(e) => setQuestionData({ ...questionData, correctFeedback: e.target.value })}
-                    rows={2}
-                    required
-                  />
-                </div>
+              <div className="flex space-x-4">
+                <Button type="submit" className="flex-1" disabled={!fileContent || uploading}>
+                  {uploading ? "Procesando..." : "Cargar preguntas"}
+                </Button>
 
-                <div className="space-y-2">
-                  <Label htmlFor="incorrectFeedback">Feedback para respuesta incorrecta</Label>
-                  <Textarea
-                    id="incorrectFeedback"
-                    value={questionData.incorrectFeedback}
-                    onChange={(e) => setQuestionData({ ...questionData, incorrectFeedback: e.target.value })}
-                    rows={2}
-                    required
-                  />
-                </div>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={handleDeleteAllQuestions}
+                  disabled={uploading}
+                  title="Esta acción eliminará todas las preguntas de la base de datos"
+                >
+                  Borrar todas las preguntas
+                </Button>
               </div>
-
-              <Button type="submit" className="w-full pix-button-primary">
-                Agregar Pregunta
-              </Button>
             </form>
           </CardContent>
         </Card>

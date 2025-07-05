@@ -1,8 +1,6 @@
-// Script para subir preguntas de ejemplo a Firestore
-// Ejecutar con: node scripts/upload-questions.js
-
+// Script para verificar y contar preguntas por competencia
 import { initializeApp } from "firebase/app"
-import { getFirestore, collection, addDoc } from "firebase/firestore"
+import { getFirestore, collection, query, where, getDocs } from "firebase/firestore"
 
 const firebaseConfig = {
   apiKey: "AIzaSyCOFq_3nQaLr84G9OdvH1TNZYexvrqfwhw",
@@ -17,149 +15,67 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
 
-const sampleQuestions = [
-  // Competencia 1.1 - Navegar, buscar y filtrar
-  {
-    type: "multiple-choice",
-    competence: "1.1",
-    level: "Básico 2",
-    dimension: "Información y alfabetización informacional",
-    title: "Búsqueda de trámites gubernamentales",
-    scenario:
-      "Carlos necesita obtener un certificado de antecedentes penales para un trabajo. Quiere encontrar información oficial sobre cómo obtenerlo en línea.",
-    options: [
-      'Buscar "certificado antecedentes penales trámite online" en el sitio web del ministerio correspondiente',
-      "Preguntar en grupos de Facebook sobre el proceso",
-      'Buscar solo "antecedentes" en Google',
-      "Ir directamente a la oficina sin buscar información previa",
-    ],
-    correctAnswerIndex: 0,
-    feedback: {
-      correct: "¡Correcto! Usar términos específicos en sitios oficiales garantiza información confiable.",
-      incorrect: "Recuerda usar palabras clave específicas y buscar en fuentes oficiales.",
-    },
-  },
-  {
-    type: "multiple-choice",
-    competence: "1.1",
-    level: "Básico 2",
-    dimension: "Información y alfabetización informacional",
-    title: "Filtrado de información educativa",
-    scenario:
-      "Ana busca información sobre becas universitarias para el próximo año y encuentra muchos resultados desactualizados.",
-    options: [
-      'Usar filtros de fecha "último año" y buscar en sitios oficiales de educación',
-      "Revisar todos los resultados sin filtrar",
-      "Buscar solo en redes sociales",
-      "Usar únicamente el primer resultado que aparezca",
-    ],
-    correctAnswerIndex: 0,
-    feedback: {
-      correct: "¡Excelente! Filtrar por fecha y usar fuentes oficiales mejora la calidad de la información.",
-      incorrect: "Los filtros de fecha y las fuentes oficiales son clave para encontrar información actualizada.",
-    },
-  },
-  {
-    type: "multiple-choice",
-    competence: "1.1",
-    level: "Básico 2",
-    dimension: "Información y alfabetización informacional",
-    title: "Navegación en portales gubernamentales",
-    scenario: "Luis está en el portal del servicio de impuestos buscando información sobre declaración de renta.",
-    options: [
-      "Usar el menú de navegación principal y la función de búsqueda del sitio",
-      "Hacer clic aleatoriamente en todos los enlaces",
-      "Abandonar el sitio y buscar en otros lugares",
-      "Solo leer la página de inicio",
-    ],
-    correctAnswerIndex: 0,
-    feedback: {
-      correct: "¡Perfecto! La navegación estructurada es la forma más eficiente de encontrar información.",
-      incorrect: "Usar el menú y la búsqueda interna del sitio es más efectivo que navegar aleatoriamente.",
-    },
-  },
+const competenceCodes = ["1.1", "1.2", "1.3", "4.1", "4.2", "4.3", "4.4"]
 
-  // Competencia 4.1 - Proteger dispositivos
-  {
-    type: "multiple-choice",
-    competence: "4.1",
-    level: "Básico 2",
-    dimension: "Seguridad",
-    title: "Seguridad en redes públicas",
-    scenario:
-      "María necesita acceder a su banca en línea desde un café con WiFi público para realizar un pago urgente.",
-    options: [
-      "Usar datos móviles o una VPN confiable, y verificar que la URL del banco comience con https",
-      "Conectarse directamente al WiFi público y proceder normalmente",
-      "Usar cualquier red WiFi disponible sin verificar su seguridad",
-      "Compartir la contraseña del WiFi con otros usuarios",
-    ],
-    correctAnswerIndex: 0,
-    feedback: {
-      correct: "¡Correcto! Usar conexiones seguras y verificar URLs protegidas es fundamental.",
-      incorrect: "Siempre usa conexiones seguras (VPN o datos móviles) para transacciones bancarias.",
-    },
-  },
-  {
-    type: "multiple-choice",
-    competence: "4.1",
-    level: "Básico 2",
-    dimension: "Seguridad",
-    title: "Actualizaciones de seguridad",
-    scenario:
-      "El smartphone de Pedro muestra una notificación de actualización del sistema operativo que incluye parches de seguridad.",
-    options: [
-      "Instalar la actualización inmediatamente para mantener el dispositivo protegido",
-      "Ignorar permanentemente las actualizaciones",
-      "Postponer la actualización indefinidamente",
-      "Desactivar todas las notificaciones de actualización",
-    ],
-    correctAnswerIndex: 0,
-    feedback: {
-      correct: "¡Excelente! Las actualizaciones de seguridad son críticas para proteger tu dispositivo.",
-      incorrect: "Las actualizaciones incluyen parches importantes que protegen contra vulnerabilidades.",
-    },
-  },
-  {
-    type: "multiple-choice",
-    competence: "4.1",
-    level: "Básico 2",
-    dimension: "Seguridad",
-    title: "Identificación de amenazas",
-    scenario:
-      'Carmen recibe un email que parece ser de su banco solicitando que descargue un archivo adjunto para "verificar su cuenta".',
-    options: [
-      "No descargar el archivo y contactar directamente al banco por teléfono para verificar",
-      "Descargar y abrir el archivo inmediatamente",
-      "Reenviar el email a familiares y amigos",
-      "Hacer clic en todos los enlaces del email",
-    ],
-    correctAnswerIndex: 0,
-    feedback: {
-      correct: "¡Perfecto! Siempre verificar directamente con la institución es la práctica más segura.",
-      incorrect: "Nunca descargues archivos de emails sospechosos. Siempre verifica directamente con la institución.",
-    },
-  },
-]
-
-async function uploadQuestions() {
+async function checkQuestions() {
   try {
-    console.log("Iniciando carga de preguntas...")
-
-    for (const question of sampleQuestions) {
-      const docRef = await addDoc(collection(db, "questions"), {
-        ...question,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      })
-      console.log("Pregunta agregada con ID:", docRef.id)
+    console.log("🔍 Verificando preguntas en la base de datos...")
+    
+    // Obtener total de preguntas
+    const allQuestionsSnapshot = await getDocs(collection(db, "questions"))
+    const totalQuestions = allQuestionsSnapshot.size
+    
+    console.log(`📊 Total de preguntas en la base de datos: ${totalQuestions}`)
+    console.log("\n📋 Desglose por competencia:")
+    
+    // Verificar cada competencia
+    for (const code of competenceCodes) {
+      const q = query(collection(db, "questions"), where("competence", "==", code))
+      const snapshot = await getDocs(q)
+      const count = snapshot.size
+      
+      // Determinar si hay suficientes preguntas (al menos 3 para los tests)
+      const status = count >= 3 ? "✅" : "❌"
+      
+      console.log(`${status} Competencia ${code}: ${count} preguntas${count < 3 ? " (se requieren al menos 3)" : ""}`)
+      
+      // Si hay preguntas, mostrar detalles del nivel
+      if (count > 0) {
+        const basicQuery = query(
+          collection(db, "questions"),
+          where("competence", "==", code),
+          where("level", "in", ["Básico", "Básico 1", "Básico 2"])
+        )
+        const basicSnapshot = await getDocs(basicQuery)
+        
+        const intermedioQuery = query(
+          collection(db, "questions"),
+          where("competence", "==", code),
+          where("level", "in", ["Intermedio", "Intermedio 1", "Intermedio 2"])
+        )
+        const intermedioSnapshot = await getDocs(intermedioQuery)
+        
+        const avanzadoQuery = query(
+          collection(db, "questions"),
+          where("competence", "==", code),
+          where("level", "in", ["Avanzado", "Avanzado 1", "Avanzado 2"])
+        )
+        const avanzadoSnapshot = await getDocs(avanzadoQuery)
+        
+        console.log(`   - Nivel Básico: ${basicSnapshot.size} preguntas`)
+        console.log(`   - Nivel Intermedio: ${intermedioSnapshot.size} preguntas`)
+        console.log(`   - Nivel Avanzado: ${avanzadoSnapshot.size} preguntas`)
+      }
+      
+      console.log("") // Línea en blanco para separar competencias
     }
-
-    console.log("Todas las preguntas han sido cargadas exitosamente!")
+    
+    console.log("\n🔎 Verificación completa!")
+    
   } catch (error) {
-    console.error("Error al cargar preguntas:", error)
+    console.error("❌ Error al verificar preguntas:", error)
   }
 }
 
 // Ejecutar la función
-uploadQuestions()
+checkQuestions()
