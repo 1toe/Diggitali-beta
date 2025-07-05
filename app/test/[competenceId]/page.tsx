@@ -199,7 +199,7 @@ export default function TestPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <TestInterface
-        session={testSession}
+        testSession={testSession}
         onAnswerSubmit={handleAnswerSubmit}
         onTestComplete={handleTestComplete}
       />

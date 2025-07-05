@@ -13,10 +13,31 @@ interface TestInterfaceProps {
 }
 
 export default function TestInterface({ testSession, onAnswerSubmit, onTestComplete }: TestInterfaceProps) {
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(
-    testSession.answers[testSession.currentQuestionIndex],
-  )
-  const [currentIndex, setCurrentIndex] = useState(testSession.currentQuestionIndex)
+  // Verificar que testSession existe y tiene la propiedad answers
+  const initialAnswer = testSession && testSession.answers ? 
+    testSession.answers[testSession.currentQuestionIndex] : null;
+    
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(initialAnswer);
+  
+  // Verificar que testSession existe antes de acceder a currentQuestionIndex
+  const [currentIndex, setCurrentIndex] = useState(
+    testSession ? testSession.currentQuestionIndex : 0
+  );
+  
+  // Si no hay sesión, mostrar mensaje de error
+  if (!testSession || !testSession.questions) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center p-6 bg-white rounded-lg shadow-lg">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Error al cargar el test</h2>
+          <p className="text-gray-700 mb-4">No se ha podido cargar la información del test correctamente.</p>
+          <a href="/dashboard" className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+            Volver al Dashboard
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   const currentQuestion = testSession.questions[currentIndex]
   const totalQuestions = 3 // Siempre 3 preguntas
